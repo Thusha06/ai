@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GenAI Student Mental Health & Dropout Risk System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 550px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 12px;
+            display: block;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+        }
+
+        button {
+            background: #3f51b5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #303f9f;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .low { background: #d4edda; color: #155724; }
+        .medium { background: #fff3cd; color: #856404; }
+        .high { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>GenAI Student Risk Prediction System</h2>
+
+    <label>Attendance Percentage</label>
+    <input type="number" id="attendance" placeholder="e.g. 72">
+
+    <label>CGPA</label>
+    <input type="number" step="0.1" id="cgpa" placeholder="e.g. 6.5">
+
+    <label>Stress Level (1 - 10)</label>
+    <input type="number" min="1" max="10" id="stress" placeholder="e.g. 8">
+
+    <label>Sleep Hours per Day</label>
+    <input type="number" id="sleep" placeholder="e.g. 5">
+
+    <label>
+        <input type="checkbox" id="assignment"> Assignment Submitted
+    </label>
+
+    <button onclick="predictRisk()">Generate AI Risk Analysis</button>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+function generateGenAIText(attendance, cgpa, stress, sleep, assignment) {
+    let response = "GenAI Analysis:\n\n";
+
+    if (attendance < 75)
+        response += `• Your attendance is ${attendance}%, which may impact learning continuity.\n`;
+
+    if (cgpa < 6)
+        response += `• Your CGPA of ${cgpa} suggests academic challenges.\n`;
+
+    if (stress > 7)
+        response += `• A stress level of ${stress} indicates high mental pressure.\n`;
+
+    if (sleep < 6)
+        response += `• Sleeping only ${sleep} hours may affect focus and emotional health.\n`;
+
+    if (!assignment)
+        response += `• Missing assignments can increase academic anxiety.\n`;
+
+    response += "\nPersonalized Recommendation:\n";
+    response += "We encourage reaching out to mentors, improving time management, and seeking professional counseling if needed.";
+
+    return response.replace(/\n/g, "<br>");
+}
+
+function predictRisk() {
+    let attendance = Number(document.getElementById("attendance").value);
+    let cgpa = Number(document.getElementById("cgpa").value);
+    let stress = Number(document.getElementById("stress").value);
+    let sleep = Number(document.getElementById("sleep").value);
+    let assignment = document.getElementById("assignment").checked;
+
+    let score = 0;
+    if (attendance < 75) score += 2;
+    if (cgpa < 6) score += 2;
+    if (stress > 7) score += 2;
+    if (sleep < 6) score += 1;
+    if (!assignment) score += 1;
+
+    let resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+
+    let genAIText = generateGenAIText(attendance, cgpa, stress, sleep, assignment);
+
+    if (score >= 6) {
+        resultDiv.className = "result high";
+        resultDiv.innerHTML = `<strong>High Risk Detected</strong><br><br>${genAIText}`;
+    }
+    else if (score >= 3) {
+        resultDiv.className = "result medium";
+        resultDiv.innerHTML = `<strong>Medium Risk Detected</strong><br><br>${genAIText}`;
+    }
+    else {
+        resultDiv.className = "result low";
+        resultDiv.innerHTML = `<strong>Low Risk Detected</strong><br><br>${genAIText}`;
+    }
+}
+</script>
+
+</body>
+</html>
